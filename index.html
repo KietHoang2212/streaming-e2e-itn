@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Streaming E2E ITN with Read–Tag–Write Policy</title>
+  <meta name="description"
+        content="Towards Efficient Simultaneous Inverse Text Normalization with Pretrained Text-to-Text Language Model and Read–Tag–Write Policy. Interspeech 2026.">
+  <meta property="og:title" content="Streaming End-to-End Inverse Text Normalization (Read–Tag–Write)"/>
+  <meta property="og:description" content="The first streaming end-to-end ITN model: pretrained text-to-text backbone + Read–Tag–Write decoding policy. Interspeech 2026."/>
+  <meta property="og:type" content="website"/>
+
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;📝&lt;/text&gt;&lt;/svg&gt;">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css?v=8">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <a class="tag-conf" href="https://interspeech2026.org/en-AU" target="_blank" rel="noopener">Interspeech 2026 &middot; Long Paper Track</a>
+          <h1 class="title is-2 publication-title">
+            Towards Efficient Simultaneous Inverse Text Normalization with
+            Pretrained Text-to-Text Language Models and a Read&ndash;Tag&ndash;Write Policy
+          </h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://orcid.org/0000-0001-8438-6585" target="_blank" rel="noopener">Kiet Anh Hoang</a><sup>*,1</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0003-1190-5569" target="_blank" rel="noopener">Khanh Le</a><sup>*,1</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0009-4515-7056" target="_blank" rel="noopener">Bao Nguyen</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0003-1560-2813" target="_blank" rel="noopener">Linh Pham</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0001-1973-2346" target="_blank" rel="noopener">Dung Vo</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0002-1422-9685" target="_blank" rel="noopener">Thai Tran</a><sup>1</sup>,</span>
+            <span class="author-block">Mai Nguyen<sup>1</sup>,</span>
+            <span class="author-block"><a href="https://orcid.org/0009-0005-5402-3683" target="_blank" rel="noopener">Tri Nguyen</a><sup>1</sup>,</span>
+            <span class="author-block">Vu Le<sup>1</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>UNEY, Switzerland</span>
+          </div>
+          <div class="is-size-6 publication-authors">
+            <span class="eql-cntrb"><sup>*</sup>Equal contribution.</span>
+          </div>
+
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="#" class="external-link button is-rounded is-dark">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                <span>Paper</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" class="external-link button is-rounded is-dark">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" class="external-link button is-rounded is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" class="external-link button is-rounded is-dark">
+                <span class="icon"><i class="fas fa-database"></i></span>
+                <span>Dataset</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" class="external-link button is-rounded is-dark">
+                <span class="icon">🤗</span>
+                <span>HuggingFace</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DEMO -->
+<section class="section" id="demo" style="padding-top:2rem;padding-bottom:1rem;">
+  <div class="container is-max-desktop">
+    <p class="content has-text-centered" style="max-width:780px;margin:0 auto 1.5rem;">
+      Watch the <b>Read&ndash;Tag&ndash;Write</b> policy stream spoken-form ASR tokens into formatted written text.
+      Pick an example and chunk size, then run it. <span class="demo-note">Outputs are precomputed for illustration.</span>
+    </p>
+
+    <div class="demo-card box">
+      <!-- controls -->
+      <div class="demo-controls">
+        <div class="demo-ctrl-group">
+          <span class="demo-ctrl-label">Example</span>
+          <div id="demo-examples" class="buttons are-small"></div>
+        </div>
+        <div class="demo-ctrl-row">
+          <div class="demo-ctrl-group">
+            <span class="demo-ctrl-label">Chunk size $c$ = <b id="demo-chunk-val">3</b></span>
+            <input type="range" id="demo-chunk" min="1" max="5" value="3" step="1" class="demo-slider">
+          </div>
+          <div class="demo-ctrl-group">
+            <span class="demo-ctrl-label">Speed</span>
+            <div class="select is-small">
+              <select id="demo-speed">
+                <option value="slow">Slow</option>
+                <option value="normal" selected>Normal</option>
+                <option value="fast">Fast</option>
+              </select>
+            </div>
+          </div>
+          <div class="demo-ctrl-group demo-actions">
+            <button id="demo-run" class="button is-link is-small">
+              <span class="icon"><i class="fas fa-play"></i></span><span>Run streaming</span>
+            </button>
+            <button id="demo-reset" class="button is-small">
+              <span class="icon"><i class="fas fa-xmark"></i></span><span>Reset</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- phase indicator -->
+      <div class="demo-phases">
+        <span class="phase-pill" id="phase-read"><span class="phase-dot"></span>Read</span>
+        <i class="fas fa-angle-right phase-arrow"></i>
+        <span class="phase-pill" id="phase-tag"><span class="phase-dot"></span>Tag</span>
+        <i class="fas fa-angle-right phase-arrow"></i>
+        <span class="phase-pill" id="phase-write"><span class="phase-dot"></span>Write</span>
+      </div>
+
+      <!-- token stream + tags -->
+      <div class="demo-block">
+        <div class="demo-block-title">Spoken-form input stream &amp; predicted tags</div>
+        <div id="demo-stream" class="demo-stream"></div>
+      </div>
+
+      <!-- output -->
+      <div class="demo-block">
+        <div class="demo-block-title">Written-form output</div>
+        <div id="demo-output" class="demo-output">
+          <span class="output-placeholder">Output will stream here…</span>
+        </div>
+      </div>
+
+      <!-- legend -->
+      <div class="demo-legend">
+        <span><span class="lg-swatch tag-O"></span>O: verbatim pass-through</span>
+        <span><span class="lg-swatch tag-B"></span>B: span begin</span>
+        <span><span class="lg-swatch tag-I"></span>I: span inside</span>
+        <span><span class="lg-swatch lg-decoded"></span>Selective decoding</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABSTRACT -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Streaming Inverse Text Normalization (ITN) is vital for converting spoken-form outputs from streaming Automatic
+            Speech Recognition into formatted written text. Existing streaming ITN methods rely on hybrid systems combining
+            neural tagging with expert-crafted finite-state transducer rules, limiting scalability across domains and languages.
+            While end-to-end models offer superior scalability by learning directly from data, standard encoder&ndash;decoder
+            architectures are inherently non-streaming due to global attention. In this paper, we propose an efficient streaming
+            end-to-end ITN system, adapting a pretrained text-to-text model to leverage its robust linguistic knowledge. To enable
+            streaming, we introduce architectural adaptations, a specialized training strategy, a <b>Read&ndash;Tag&ndash;Write</b>
+            decoding policy, and inference optimizations. Experiments on Vietnamese datasets show accuracy comparable to
+            non-streaming baselines, outperforming hybrid methods while satisfying real-time latency requirements.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEASER -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <figure class="image">
+      <img src="./static/images/ITN-streaming-5.png" alt="Streaming end-to-end ITN framework with the Read–Tag–Write policy"/>
+    </figure>
+    <p class="caption">
+      <b>Overview of the proposed streaming end-to-end ITN framework using the Read&ndash;Tag&ndash;Write policy.</b>
+      The streaming encoder uses Dynamic Right Context masking to process incoming chunks of spoken-form tokens, while a joint
+      tagger predicts $\{$B, I, O$\}$ labels. Verbatim tokens (O) are passed through instantly to minimize latency. Upon completing a
+      normalization span, the autoregressive decoder is selectively triggered, generating normalized text by cross-attending to the
+      relevant encoder hidden states $H_{0:m}$ and conditioning on the written-form prefix $\hat{y}_{pre}$.
+    </p>
+  </div>
+</section>
+
+<!-- CONTRIBUTIONS -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Key Contributions</h2>
+    <div class="columns is-multiline is-centered" style="margin-top:1rem;">
+      <div class="column is-one-third">
+        <div class="box contribution-box">
+          <span class="icon-text-big"><i class="fas fa-recycle"></i></span>
+          <h3 class="title is-5">Make seq2seq truly streamable</h3>
+          <p>A practical recipe of architectural changes, a streaming-aware multi-task objective, and a novel data
+          augmentation that together enable end-to-end ITN with strict left-to-right processing.</p>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="box contribution-box">
+          <span class="icon-text-big"><i class="fas fa-bolt"></i></span>
+          <h3 class="title is-5">Read&ndash;Tag&ndash;Write policy</h3>
+          <p>An efficient simultaneous decoding policy that passes through non-normalized tokens with minimal delay and triggers
+          generation only on completed spans, accelerated by KV caching and a Copy&ndash;Paste strategy.</p>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="box contribution-box">
+          <span class="icon-text-big"><i class="fas fa-flask"></i></span>
+          <h3 class="title is-5">Comprehensive evaluation</h3>
+          <p>Rigorous evaluation on a newly curated 5M-sentence Vietnamese dataset with automated alignments and boundary tags,
+          verifying highly efficient real-time performance.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
+
+    <h3 class="subtitle-accent">Streaming Encoder with a Joint Tagger</h3>
+    <div class="content has-text-justified">
+      <p>
+        Standard seq2seq encoders use global attention and cannot run incrementally. We make the encoder streamable with
+        <b>Dynamic Right Context (DRC) masking</b> during training: an attention mask that simulates variable chunk sizes and a
+        dynamic look-ahead while always preserving the full historical left context. Varying these parameters during training makes
+        the model robust to diverse latency constraints at inference.
+      </p>
+      <p>
+        For an input sequence $X = \{x_0, \dots, x_{n-1}\}$ the encoder produces hidden states $H \in \mathbb{R}^{n \times d}$ under
+        the DRC mask. A lightweight linear <b>Tagger</b> sits atop $H$ and labels each token with a $\{\text{B}, \text{I}, \text{O}\}$
+        (Beginning, Inside, Outside) scheme for on-the-fly span detection:
+      </p>
+    </div>
+    <div class="equation">$$\hat{t}_i = \operatorname{argmax}\!\left(H_i\,W_{\text{tag}}\right), \qquad W_{\text{tag}} \in \mathbb{R}^{d \times 3}$$</div>
+    <div class="content has-text-justified">
+      <p>
+        Unlike hybrid systems that need fine-grained category tags to trigger FST rules, our tagger uses only <b>3 classes</b>,
+        simplifying classification and yielding more robust span detection. These tags are the control signals for the RTW policy below.
+      </p>
+    </div>
+
+    <h3 class="subtitle-accent" style="margin-top:2.2rem;">Autoregressive Decoder &amp; Training Objective</h3>
+    <div class="content has-text-justified">
+      <p>
+        The decoder keeps its standard autoregressive structure, generating written-form tokens $y_t$ by cross-attending to $H$ and
+        conditioning on previous tokens $y_{\lt t}$:
+      </p>
+    </div>
+    <div class="equation">$$P(y_t \mid y_{\lt t}, H) = \operatorname{softmax}\!\left(e_t\,W_{\text{ffn}}^{\top}\right)$$</div>
+    <div class="content has-text-justified">
+      <p>The model is trained with a <b>multi-task objective</b> combining a span-detection loss and a sequence-generation loss:</p>
+    </div>
+    <div class="equation">
+      $$\begin{aligned}
+        \mathcal{L}_{\text{tag}} &= -\frac{1}{\sum_{b=1}^{B} N_b}\sum_{b=1}^{B}\sum_{i=1}^{N_b}\log P\bigl(t_{b,i} \mid x_{b,i}\bigr) \\[6pt]
+        \mathcal{L}_{\text{gen}} &= -\frac{1}{\sum_{b=1}^{B} T_b}\sum_{b=1}^{B}\sum_{t=1}^{T_b}\log P\bigl(y_{b,t} \mid y_{b,\lt t}, H_b\bigr)
+      \end{aligned}$$
+      $$\boxed{\,\mathcal{L} = \mathcal{L}_{\text{tag}} + \mathcal{L}_{\text{gen}}\,}$$
+    </div>
+
+    <h3 class="subtitle-accent" style="margin-top:2.2rem;">The Read&ndash;Tag&ndash;Write Policy</h3>
+    <div class="content has-text-justified">
+      <p>
+        Unlike Simultaneous Machine Translation policies that manage global structural reordering, RTW exploits the local,
+        order-preserving nature of ITN to coordinate the streaming encoder and autoregressive decoder, ensuring generative
+        normalization occurs <em>only when necessary</em>. It operates in three phases:
+      </p>
+    </div>
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="box phase-box">
+          <span class="phase-num">1</span>
+          <h4 class="phase-title">Read</h4>
+          <p>Incoming ASR tokens arrive in chunks $C_k = \{x_i, \dots, x_{i+c-1}\}$ of size $c$. The DRC-constrained encoder
+          processes $C_k$ using cached history and a look-ahead of $r$ tokens, appending $H_{i:i+c-1}$ to the global state $H_{0:i+c-1}$.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box phase-box">
+          <span class="phase-num">2</span>
+          <h4 class="phase-title">Tag</h4>
+          <p>The joint tagger classifies each new token as $\hat{t}_j \in \{B, I, O\}$. A span completes only when the next tag is
+          $B$ or $O$ (or a sentence boundary); an $I$ keeps the system reading without triggering a write.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box phase-box">
+          <span class="phase-num">3</span>
+          <h4 class="phase-title">Write</h4>
+          <p><b>Verbatim pass-through</b> emits $O$ tokens directly with minimal latency. <b>Selective decoding</b> fires on completed
+          $B$&ndash;$I$ spans, cross-attending only to $H_{0:m}$ so look-ahead never leaks into the transformation.</p>
+        </div>
+      </div>
+    </div>
+    <div class="content has-text-justified" style="margin-top:0.8rem;">
+      <p>
+        Letting $m$ be the index of the last token of the completed span, the decoder produces the local written-form segment
+        $\hat{y}_{\text{local}}$ conditioned on the prefix $\hat{y}_{\text{pre}}$ and restricted cross-attention to $H_{0:m}$:
+      </p>
+    </div>
+    <div class="equation">$$P(\hat{y}_{\text{local}} \mid \hat{y}_{\text{pre}}, H_{0:m}) = \prod_{u=1}^{U} P\!\left(y_u \mid [\hat{y}_{\text{pre}}; y_{\lt u}], H_{0:m}\right)$$</div>
+    <div class="content has-text-justified">
+      <p>
+        Restricting cross-attention to $H_{0:m}$ prevents the decoder from over-generating beyond the target span. Decoding stops at
+        <code>&lt;EOS&gt;</code>, with a hard cap of $L_{\text{max\_local}}$ tokens per span to avoid runaway loops.
+      </p>
+    </div>
+
+    <h3 class="subtitle-accent" style="margin-top:2.2rem;">Inference Optimization</h3>
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="box opt-box">
+          <span class="opt-icon"><i class="fas fa-layer-group"></i></span>
+          <h4 class="phase-title">Encoder KV caching</h4>
+          <p>An incremental key&ndash;value cache reuses encoder computation across chunks; a single batched decoder pass
+          re-populates self- and cross-attention caches before autoregressive generation resumes.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box opt-box">
+          <span class="opt-icon"><i class="fas fa-copy"></i></span>
+          <h4 class="phase-title">Copy&ndash;Paste strategy</h4>
+          <p>Since the $O$ tag dominates, verbatim tokens bypass the decoder but are <em>still kept</em> in the historical context,
+          cutting compute and curbing hallucinations while preserving full context for $B$&ndash;$I$ spans.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="box opt-box">
+          <span class="opt-icon"><i class="fas fa-bolt"></i></span>
+          <h4 class="phase-title">Decoder KV caching</h4>
+          <p>A "fully streaming" variant caches decoder self- and cross-attention, updating states only for new tokens. It removes
+          init passes at the cost of a small, empirically negligible train&ndash;inference mismatch.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="subtitle-accent" style="margin-top:2.2rem;">Prefix-based Training Augmentation</h3>
+    <div class="content has-text-justified">
+      <p>
+        RTW needs the decoder to emit a <code>&lt;EOS&gt;</code> to end each <em>local</em> span, but standard training only conditions
+        <code>&lt;EOS&gt;</code> on a <em>global</em> source boundary: a train&ndash;test mismatch. We bridge it by stochastically
+        truncating aligned training pairs on-the-fly with probability $p_{\text{trunc}}$: the source-side <code>&lt;EOS&gt;</code> is
+        omitted while the target prefix is terminated with <code>&lt;EOS&gt;</code>. This teaches the model that any valid span completion,
+        even mid-sentence, must trigger termination from partial encoder states alone.
+      </p>
+    </div>
+    <div class="algo-box">
+      <div class="algo-title">Algorithm 1: Prefix-based Training Augmentation</div>
+      <pre><code><span class="kw">Require:</span> training pair (x<sub>0:N-1</sub>, y<sub>0:M-1</sub>), probability p<sub>trunc</sub>
+  r ~ Uniform(0, 1)
+  <span class="kw">if</span> r &lt; p<sub>trunc</sub> <span class="cmt"># truncated case</span>
+      k ~ Uniform{1, …, N-1}
+      x' ← x<sub>0:k-1</sub>                       <span class="cmt"># no source-side &lt;EOS&gt;</span>
+      y' ← [ y<sub>0:l-1</sub> ; &lt;EOS&gt; ]            <span class="cmt"># target aligned with x<sub>0:k-1</sub></span>
+  <span class="kw">else</span>                                  <span class="cmt"># full-sequence case</span>
+      x' ← [ x<sub>0:N-1</sub> ; &lt;EOS&gt; ]
+      y' ← [ y<sub>0:M-1</sub> ; &lt;EOS&gt; ]
+  <span class="kw">return</span> (x', y')</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="section" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Results</h2>
+
+    <h3 class="subtitle-accent">ITN Performance on Vietnamese</h3>
+    <p class="content has-text-justified">
+      $S_2$ achieves WERs of <b>4.18%</b> / <b>0.64%</b>, surpassing the hybrid baseline $H_2$ by
+      $1.98\times$ / $6.56\times$ and Wait-$k$ by $1.67\times$ / $5.81\times$, while approaching the non-streaming
+      $B_2$ baseline and reaching a <b>97.19% tagging F$_1$</b> for reliable boundary detection.
+    </p>
+
+    <figure class="tbl-figure">
+      <figcaption class="tbl-caption">
+        <b>ITN performance with and without punctuation &amp; capitalization (PnC).</b>
+        Categories: $B$ non-streaming baselines, $H$ hybrid streaming, $S$ our end-to-end streaming variants. Lower WER is better.
+      </figcaption>
+      <div class="table-scroll">
+        <table class="paper-table">
+          <thead>
+            <tr>
+              <th class="ta-l" colspan="2">Model</th><th>Pretrained</th><th>F$_1$</th>
+              <th>WER<span class="th-sub">w/ PnC</span></th><th>WER<span class="th-sub">w/o PnC</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="grp-label" rowspan="4">Non-stream</td><td class="ta-l">$B_0$ <span class="muted">(scratch)</span></td><td>&times;</td><td>&ndash;</td><td>4.61</td><td>1.11</td></tr>
+            <tr><td class="ta-l">$B_1$</td><td>EnViT5</td><td>&ndash;</td><td>3.84</td><td>0.74</td></tr>
+            <tr><td class="ta-l">$B_2$ <span class="muted">(+tagging)</span></td><td>EnViT5</td><td>97.34</td><td><b>3.63</b></td><td><b>0.52</b></td></tr>
+            <tr><td class="ta-l">AdapITN</td><td>EnViBert</td><td>96.65</td><td>40.08</td><td>1.45</td></tr>
+            <tr class="block-sep"><td class="grp-label" rowspan="6">Stream</td><td class="ta-l">$H_1$ <span class="muted">(hybrid)</span></td><td>PhoBert</td><td>86.30</td><td>10.16</td><td>4.62</td></tr>
+            <tr><td class="ta-l">$H_2$ <span class="muted">(hybrid)</span></td><td>PhoBert</td><td>90.21</td><td>8.27</td><td>4.20</td></tr>
+            <tr><td class="ta-l">Wait-$k$ <span class="muted">($k{=}9$)</span></td><td>EnViT5</td><td>&ndash;</td><td>6.99</td><td>3.72</td></tr>
+            <tr><td class="ta-l">$S_1$ <span class="muted">(ours)</span></td><td>EnViT5</td><td>95.48</td><td>5.18</td><td>0.82</td></tr>
+            <tr class="ours-row"><td class="ta-l">$S_2$ <span class="muted">(ours)</span></td><td>EnViT5</td><td><b>97.19</b></td><td><b>4.18</b></td><td><b>0.64</b></td></tr>
+            <tr class="ours-row"><td class="ta-l">$S_4$ <span class="muted">(fully stream.)</span></td><td>EnViT5</td><td>97.19</td><td>4.21</td><td>0.69</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </figure>
+
+    <h3 class="subtitle-accent" style="margin-top:2.5rem;">Efficiency &amp; Ablations</h3>
+    <div class="columns is-variable is-5" style="margin-top:0.4rem;">
+      <div class="column">
+        <figure class="image">
+          <img src="./static/images/itn_latency.png" alt="Per-chunk latency breakdown" loading="lazy"/>
+        </figure>
+        <p class="caption"><b>Per-chunk latency.</b> Encoder vs. total latency for four streaming configurations across chunk
+        sizes 3&ndash;5. Combined optimizations give a $3.43\times$ speedup at $c{=}5$ (206&nbsp;ms &rarr; 60&nbsp;ms).</p>
+      </div>
+      <div class="column">
+        <figure class="image">
+          <img src="./static/images/wer_prob_trunc.png" alt="Impact of truncation probability on WER" loading="lazy"/>
+        </figure>
+        <p class="caption"><b>Truncation probability.</b> Prefix-based augmentation is essential for streaming; the optimal balance
+        is $p_{\text{trunc}}{=}0.8$, minimizing streaming WER while preserving offline accuracy.</p>
+      </div>
+    </div>
+
+    <h3 class="subtitle-accent" style="margin-top:2.5rem;">Generalizability Across Architectures &amp; Languages</h3>
+    <p class="content has-text-justified">The framework is <b>architecture-agnostic</b> and <b>language-agnostic</b>, consistently
+    narrowing the streaming&ndash;offline gap across BartPho, EnViT5 (Vietnamese), and T5 (English).</p>
+
+    <figure class="tbl-figure tbl-narrow">
+      <figcaption class="tbl-caption">
+        <b>Generalizability of ITN performance across architectures and languages.</b>
+        Values are average WER (%) across $c \in \{3,4,5\}$ and $r \in \{0,1,2\}$. Vietnamese uses
+        <b>ASR-L</b> (ground-truth spoken text) and <b>ASR-O</b> (noisy ASR transcripts); English uses
+        <b>With</b> and <b>Without</b> PnC.
+      </figcaption>
+      <div class="table-scroll">
+        <table class="paper-table">
+          <thead>
+            <tr>
+              <th class="ta-l">Lang.</th><th class="ta-l">Backbone</th>
+              <th>Params</th><th>Stream</th>
+              <th class="grp-head" colspan="2">WER (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="metric-row"><td class="no-border" colspan="4"></td><th class="cmid">ASR-L</th><th class="cmid">ASR-O</th></tr>
+            <tr><td class="grp-label" rowspan="4">Vi</td><td class="ta-l" rowspan="2">BartPho</td><td rowspan="2">132M</td><td>&times;</td><td>4.61</td><td>11.07</td></tr>
+            <tr><td>&#10003;</td><td>6.31</td><td>12.84</td></tr>
+            <tr class="sub-sep"><td class="ta-l" rowspan="2">EnViT5</td><td rowspan="2">275M</td><td>&times;</td><td><b>3.84</b></td><td><b>10.01</b></td></tr>
+            <tr><td>&#10003;</td><td>4.54</td><td>11.02</td></tr>
+            <tr class="metric-row block-sep"><td class="no-border" colspan="4"></td><th class="cmid">W/ PnC</th><th class="cmid">W/o PnC</th></tr>
+            <tr><td class="grp-label" rowspan="2">En</td><td class="ta-l" rowspan="2">T5</td><td rowspan="2">223M</td><td>&times;</td><td>6.48</td><td>1.33</td></tr>
+            <tr><td>&#10003;</td><td>8.17</td><td>1.84</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- BIBTEX -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">BibTeX</h2>
+    <pre><code>@inproceedings{hoang2026streaming,
+  title     = {Towards Efficient Simultaneous Inverse Text Normalization with
+               Pretrained Text-to-Text Language Models and a Read--Tag--Write Policy},
+  author    = {Hoang, Kiet Anh and Le, Khanh and Nguyen, Bao and Pham, Linh and
+               Vo, Dung and Tran, Thai and Nguyen, Mai and Nguyen, Tri and Le, Vu},
+  booktitle = {Proc. Interspeech 2026},
+  year      = {2026}
+}</code></pre>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8 has-text-centered content">
+        <p>
+          This page was built using the
+          <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>,
+          adapted from the <a href="https://nerfies.github.io">Nerfies</a> project page. Content is licensed under a
+          <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> license.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="./static/js/demo.js?v=3"></script>
+</body>
+</html>
