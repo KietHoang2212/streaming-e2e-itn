@@ -70,7 +70,7 @@ const EXAMPLES = {
 
   // ---- long, mixed-type examples ----
   vi_report: {
-    label: "VI · Report (long)",
+    label: "VI · Report",
     // → "Ngày 20/11/2025, công ty đạt doanh thu 15,5 tỷ đồng, tăng 30% so với quý ba."
     tokens: [
       { w: "ngày",   tag: "B", out: "Ngày" },
@@ -108,7 +108,7 @@ const EXAMPLES = {
   },
 
   en_news: {
-    label: "EN · News (long)",
+    label: "EN · News",
     // → "On January 15th, 2024, Prof. Smith paid $3,500 for 42% of the shares at 9:30 AM."
     tokens: [
       { w: "on",        tag: "B", out: "On" },
@@ -140,7 +140,7 @@ const EXAMPLES = {
   },
 
   en_specs: {
-    label: "EN · Tech specs (long)",
+    label: "EN · Tech specs",
     // → "The model has 275M parameters, uses 80 GB of memory, and reaches 98.5% accuracy."
     tokens: [
       { w: "the",        tag: "B", out: "The" },
